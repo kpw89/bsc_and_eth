@@ -4,12 +4,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import jnr.ffi.annotations.In;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -50,18 +57,54 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class MainActivity extends AppCompatActivity {
-    private final static BigInteger GAS_LIMIT = BigInteger.valueOf(6721975L);
-    private final static BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
     private int STORAGE_PERMISSION_CODE = 1;
     private Web3j web3 =null;
     //0xc57667095bf50672cd850fcded4bdef3677869d5
-    Able_sol_Able able_contract ;
+    private String ble_address = "0102030405060708090a000000000001";
+    ///0102030405060708090a000000000009
+    //default wallet address 0x3806fff1ee6d556e7835713e6a977e2080321616
+    TextView tv_wallet_account ;
+    TextView tv_wallet_balance ;
+    TextView tv_ble_id;
+
+    Spinner spinner_ble;
+    Spinner spinner_smart_contract;
+
+    Button btn_2000 ;
+    Button btn_3000;
+    Button btn_ble;
+
+    String ble_id = "0102030405060708090a000000000009";
+
     BContract bContract;
+    BLContract blContract;
     Credentials credentials;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        tv_wallet_balance = findViewById(R.id.tv_wallet_balance);
+        tv_wallet_account = findViewById(R.id.tv_wallet_account);
+     //   tv_ble_id = findViewById(R.id.tv_ble_id);
+//        tv_ble_id.setText("ID: "+ble_id);
+
+        btn_2000 = findViewById(R.id.btn_2000);
+        btn_3000 = findViewById(R.id.btn_3000);
+        btn_ble = findViewById(R.id.btn_ble);
+
+        spinner_ble = findViewById(R.id.spinner_ble);
+        spinner_smart_contract = findViewById(R.id.spinner_smart_contract);
+
+        //ble addresse
+        String[] ble_adresses = new String[]{"0102030405060708090a000000000009", "ffbbcc0405060708090a000003300001", "d908070605040302010d000000000022","2152734425261718195b000000000111"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ble_adresses);
+        spinner_ble.setAdapter(adapter);
+
+        //smart contract addresses
+        String[] smart_contract_adresses = new String[]{"Wallet 1", "Wallet 2", "Wallet 3","Wallet 4"};
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, smart_contract_adresses);
+        spinner_smart_contract.setAdapter(adapter2);
 
         //conect to node
         web3 = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/fcbf73400bbb48b28291758dd4e2b8f5"));
@@ -86,37 +129,45 @@ public class MainActivity extends AppCompatActivity {
             credentials = WalletUtils.loadCredentials("123456","/storage/emulated/0/Download/UTC--2020-11-25T11-00-58.548865400Z--3806fff1ee6d556e7835713e6a977e2080321616.json" );
             //Credentials credentials1 = Credentials.create(Wallet.decrypt("123456", walletFile));
             Toast.makeText(this, "Your address is " + credentials.getAddress(), Toast.LENGTH_LONG).show();
-            balance();
+            tv_wallet_account.setText("Account: \n"+credentials.getAddress());
+            tv_wallet_balance.setText("Balance: "+balance()+" wei");
 
         }
         catch (Exception e){
-            // Toast.makeText(this, "error caught no credentials", Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, "333"+e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-//0x1876929D6a901A1FE859f0C8c38805feA2BC13C8
-        try {
-           //able_contract =  Able_sol_Able.load("0xc57667095BF50672Cd850FcDeD4BDEF3677869D5", web3, credentials, new DefaultGasProvider());
-            bContract = BContract.load("0x59bfE14B8bBc6A3D9cb76cF7a1403807Aa59165a", web3, credentials ,new DefaultGasProvider());
-            Toast.makeText(this,"is valid: "+bContract.getContractAddress() , Toast.LENGTH_SHORT).show();
-            //Toast.makeText(this,"is : "+bContract.addresscount().encodeFunctionCall() , Toast.LENGTH_SHORT).show();
-            //bContract.addAdress("jhgj").send();
-            Toast.makeText(this,"is valid: "+bContract.addresscount().sendAsync().get() , Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, "address: "+ bContract.addresses(BigInteger.valueOf(0)).sendAsync().get(), Toast.LENGTH_SHORT).show();
-            bContract.addAdress("AndROID on money ",BigInteger.valueOf(30000L)).sendAsync();
-           // Toast.makeText(this, ".()."+bContract.addAdress("sent from Android",BigInteger.valueOf(500)).sendAsync().isDone(), Toast.LENGTH_SHORT).show();
-            //bContract.addAdress("sent ",BigInteger.valueOf(500)).sendAsync();
-        }catch (Exception e){
-            Toast.makeText(this, e.getCause()+"\n"+e.getLocalizedMessage()+"\n"+e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-
-
-        //test send ehter
-        //sendEther();
-        try {
-
-        } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+        try {
+            blContract = BLContract.load("0xE7d5Cd7890d0373e292793486d001113F6053fc1", web3, credentials ,new DefaultGasProvider());
+            Toast.makeText(this,"Contract Address: \n"+blContract.getContractAddress() , Toast.LENGTH_SHORT).show();
+        }catch (Exception e){
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        btn_2000.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "buying Access A for 2000 wei", Toast.LENGTH_SHORT).show();
+                blContract.addAdress(spinner_ble.getSelectedItem().toString(),BigInteger.valueOf(2000L)).sendAsync();
+            }
+        });
+
+        btn_3000.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "buying Access B for 3000 wei", Toast.LENGTH_SHORT).show();
+                blContract.addAdress(spinner_ble.getSelectedItem().toString(),BigInteger.valueOf(3000L)).sendAsync();
+            }
+        });
+
+        btn_ble.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,BLE_Broadcast.class);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
 
@@ -168,14 +219,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private  void balance() throws ExecutionException, InterruptedException {
+    private  String balance() throws ExecutionException, InterruptedException {
         EthGetBalance ethGetBalance = web3
                 .ethGetBalance("0x3806fff1ee6d556e7835713e6a977e2080321616", DefaultBlockParameterName.LATEST)
                 .sendAsync()
                 .get();
 
         BigInteger wei = ethGetBalance.getBalance();
-        Toast.makeText(this, "balance wei : "+wei.toString(), Toast.LENGTH_LONG).show();
+        return wei.toString();
     }
 
     private void sendEther(){
@@ -191,28 +242,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void send_ble_address(String ble_add) throws Exception {
-        able_contract.addAdress(ble_add).send();
-    }
-
-    private void diesdas () throws ExecutionException, InterruptedException {
-        List inputParams = new ArrayList();
-        List outputParams = new ArrayList();
-        Function function = new Function("addAdress", inputParams, outputParams);
-        String encodedFunction = FunctionEncoder.encode(function);
-    //    We can then initialize our Transaction with necessary gas (used to execute of the Transaction) and nonce parameters:
-
-        BigInteger nonce = BigInteger.valueOf(100);
-        BigInteger gasprice = BigInteger.valueOf(100);
-        BigInteger gaslimit = BigInteger.valueOf(100);
-
-        Transaction transaction = Transaction
-                .createFunctionCallTransaction("FROM_ADDRESS",
-                        nonce, gasprice, gaslimit, "TO_ADDRESS", encodedFunction);
-
-        EthSendTransaction transactionResponse = web3.ethSendTransaction(transaction).sendAsync().get();
+    private void loadCredentials(){
 
     }
+
+
 
 
 }
