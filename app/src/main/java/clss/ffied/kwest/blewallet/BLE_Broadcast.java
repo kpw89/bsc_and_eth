@@ -40,15 +40,6 @@ public class BLE_Broadcast extends AppCompatActivity {
         beaconTransmitter = new BeaconTransmitter(getApplicationContext(), beaconParser);
         beaconTransmitter.startAdvertising(beacon, new AdvertiseCallback() {
 
-            @Override
-            public void onStartFailure(int errorCode) {
-                System.out.println(errorCode);
-            }
-
-            @Override
-            public void onStartSuccess(AdvertiseSettings settingsInEffect) {
-                System.out.println(settingsInEffect.describeContents());
-            }
         });
 
         btn_backwallet = findViewById(R.id.btn_backwallet);
