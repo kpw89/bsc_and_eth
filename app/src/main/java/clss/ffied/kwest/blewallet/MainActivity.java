@@ -60,22 +60,16 @@ import java.util.concurrent.Future;
 public class MainActivity extends AppCompatActivity {
     private int STORAGE_PERMISSION_CODE = 1;
     private Web3j web3 =null;
-    private String ble_address = "0102030405060708090a000000000001";
-    //default wallet address 0x3806fff1ee6d556e7835713e6a977e2080321616
+
     TextView tv_wallet_account ;
     TextView tv_wallet_balance ;
-    TextView tv_ble_id;
 
     Spinner spinner_ble;
-    Spinner spinner_smart_contract;
 
     Button btn_2000 ;
     Button btn_3000;
     Button btn_ble;
 
-    String ble_id = "0102030405060708090a000000000009";
-
-    BContract bContract;
     BLContract blContract;
     Credentials credentials;
     @Override
@@ -85,15 +79,12 @@ public class MainActivity extends AppCompatActivity {
 
         tv_wallet_balance = findViewById(R.id.tv_wallet_balance);
         tv_wallet_account = findViewById(R.id.tv_wallet_account);
-     //   tv_ble_id = findViewById(R.id.tv_ble_id);
-//        tv_ble_id.setText("ID: "+ble_id);
 
         btn_2000 = findViewById(R.id.btn_2000);
         btn_3000 = findViewById(R.id.btn_3000);
         btn_ble = findViewById(R.id.btn_ble);
 
         spinner_ble = findViewById(R.id.spinner_ble);
-        //spinner_smart_contract = findViewById(R.id.spinner_smart_contract);
 
         //ble addresse
         String[] ble_adresses = new String[]{"0102030405060708090a000000000009", "ffbbcc0405060708090a000003300001", "d908070605040302010d000000000022","2152734425261718195b000000000111"};
@@ -121,10 +112,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         //load walletfile from download folder , create credentials with password and walletfile
-
         try {
             credentials = WalletUtils.loadCredentials("123456","/storage/emulated/0/Download/UTC--2020-11-25T11-00-58.548865400Z--3806fff1ee6d556e7835713e6a977e2080321616.json" );
-            //Credentials credentials1 = Credentials.create(Wallet.decrypt("123456", walletFile));
             Toast.makeText(this, "Your address is " + credentials.getAddress(), Toast.LENGTH_LONG).show();
             tv_wallet_account.setText("Account: \n"+credentials.getAddress());
             tv_wallet_balance.setText("Balance: "+balance()+" wei");
@@ -133,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
         catch (Exception e){
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+
+        //load Smart Contract
         try {
             blContract = BLContract.load("0xE7d5Cd7890d0373e292793486d001113F6053fc1", web3, credentials ,new DefaultGasProvider());
             Toast.makeText(this,"Contract Address: \n"+blContract.getContractAddress() , Toast.LENGTH_SHORT).show();
@@ -160,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this,BLE_Broadcast.class);
-                intent.putExtra(spinner_ble.getSelectedItem().toString(), "key" );
+                intent.putExtra("key", spinner_ble.getSelectedItem().toString() );
                 startActivity(intent);
             }
         });
@@ -239,7 +230,5 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "send Ether error "+e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
-
-
 
 }

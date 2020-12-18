@@ -6,8 +6,10 @@ import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseSettings;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconParser;
@@ -16,10 +18,14 @@ public class BLE_Broadcast extends AppCompatActivity {
 
     Button btn_backwallet;
     BeaconTransmitter beaconTransmitter;
+    String ble_address;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_b_l_e__broadcast);
+
+        Bundle bundle = getIntent().getExtras();
+        ble_address = bundle.getString("key");
 
         Beacon beacon = new Beacon.Builder()
                 .setId1("0102030405060708090a")
@@ -36,12 +42,12 @@ public class BLE_Broadcast extends AppCompatActivity {
 
             @Override
             public void onStartFailure(int errorCode) {
-                //  Log.e(TAG, "Advertisement start failed with code: "+errorCode);
+                System.out.println(errorCode);
             }
 
             @Override
             public void onStartSuccess(AdvertiseSettings settingsInEffect) {
-                // Log.i(TAG, "Advertisement start succeeded.");
+                System.out.println(settingsInEffect.describeContents());
             }
         });
 
@@ -54,7 +60,6 @@ public class BLE_Broadcast extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
     }
 }
