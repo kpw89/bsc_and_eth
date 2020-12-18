@@ -100,23 +100,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ble_adresses);
         spinner_ble.setAdapter(adapter);
 
-        //smart contract addresses
-        /*String[] smart_contract_adresses = new String[]{"Wallet 1", "Wallet 2", "Wallet 3","Wallet 4"};
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, smart_contract_adresses);
-        spinner_smart_contract.setAdapter(adapter2);
-        AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
 
-            @Override
-            public void onItemSelected(AdapterView<?> aAdapter, View aView, int arg2, long arg3) {
-                Toast.makeText(MainActivity.this, "asjdföladsjföladsjk", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-
-            }
-        };
-        spinner_smart_contract.setOnItemSelectedListener(onItemSelectedListener);*/
 
 
         //conect to node
@@ -255,8 +239,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "send Ether error "+e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
-
-
 
 
 
