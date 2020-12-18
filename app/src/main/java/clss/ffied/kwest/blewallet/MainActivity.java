@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -59,9 +60,7 @@ import java.util.concurrent.Future;
 public class MainActivity extends AppCompatActivity {
     private int STORAGE_PERMISSION_CODE = 1;
     private Web3j web3 =null;
-    //0xc57667095bf50672cd850fcded4bdef3677869d5
     private String ble_address = "0102030405060708090a000000000001";
-    ///0102030405060708090a000000000009
     //default wallet address 0x3806fff1ee6d556e7835713e6a977e2080321616
     TextView tv_wallet_account ;
     TextView tv_wallet_balance ;
@@ -94,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         btn_ble = findViewById(R.id.btn_ble);
 
         spinner_ble = findViewById(R.id.spinner_ble);
-        spinner_smart_contract = findViewById(R.id.spinner_smart_contract);
+        //spinner_smart_contract = findViewById(R.id.spinner_smart_contract);
 
         //ble addresse
         String[] ble_adresses = new String[]{"0102030405060708090a000000000009", "ffbbcc0405060708090a000003300001", "d908070605040302010d000000000022","2152734425261718195b000000000111"};
@@ -102,9 +101,23 @@ public class MainActivity extends AppCompatActivity {
         spinner_ble.setAdapter(adapter);
 
         //smart contract addresses
-        String[] smart_contract_adresses = new String[]{"Wallet 1", "Wallet 2", "Wallet 3","Wallet 4"};
+        /*String[] smart_contract_adresses = new String[]{"Wallet 1", "Wallet 2", "Wallet 3","Wallet 4"};
         ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, smart_contract_adresses);
         spinner_smart_contract.setAdapter(adapter2);
+        AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> aAdapter, View aView, int arg2, long arg3) {
+                Toast.makeText(MainActivity.this, "asjdföladsjföladsjk", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+            }
+        };
+        spinner_smart_contract.setOnItemSelectedListener(onItemSelectedListener);*/
+
 
         //conect to node
         web3 = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/fcbf73400bbb48b28291758dd4e2b8f5"));
@@ -163,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this,BLE_Broadcast.class);
+                intent.putExtra(spinner_ble.getSelectedItem().toString(), "key" );
                 startActivity(intent);
             }
         });
@@ -242,9 +256,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void loadCredentials(){
-
-    }
 
 
 
